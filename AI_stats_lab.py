@@ -28,7 +28,9 @@ def joint_gaussian_pdf(x, y, mu_x=1, mu_y=-2, sigma_x=2, sigma_y=3, rho=0.6):
         (2 * np.pi * sigma_x * sigma_y * np.sqrt(1 - rho ** 2))
     )
 
-    exponent = np.exp(-q / (2 * (1 - rho ** 2)))
+    exponent = np.exp(
+        -q / (2 * (1 - rho ** 2))
+    )
 
     return coefficient * exponent
 
@@ -73,7 +75,14 @@ def covariance_matrix(sigma_x=2, sigma_y=3, rho=0.6):
     ])
 
 
-def joint_pdf_grid_integral(mu_x=1, mu_y=-2, sigma_x=2, sigma_y=3, rho=0.6, n=250):
+def joint_pdf_grid_integral(
+    mu_x=1,
+    mu_y=-2,
+    sigma_x=2,
+    sigma_y=3,
+    rho=0.6,
+    n=250
+):
     """
     Numerically approximate integral of joint Gaussian PDF
     over the rectangle:
@@ -105,9 +114,12 @@ def joint_pdf_grid_integral(mu_x=1, mu_y=-2, sigma_x=2, sigma_y=3, rho=0.6, n=25
     for x in x_vals:
         for y in y_vals:
             total += joint_gaussian_pdf(
-                x, y,
-                mu_x, mu_y,
-                sigma_x, sigma_y,
+                x,
+                y,
+                mu_x,
+                mu_y,
+                sigma_x,
+                sigma_y,
                 rho
             )
 
@@ -174,7 +186,11 @@ def sample_covariance_matrix(x_samples, y_samples):
     Use denominator n-1.
     """
 
-    return np.cov(x_samples, y_samples, ddof=1)
+    return np.cov(
+        x_samples,
+        y_samples,
+        ddof=1
+    )
 
 
 def sample_correlation(x_samples, y_samples):
@@ -182,7 +198,10 @@ def sample_correlation(x_samples, y_samples):
     Return sample correlation coefficient.
     """
 
-    return np.corrcoef(x_samples, y_samples)[0, 1]
+    return np.corrcoef(
+        x_samples,
+        y_samples
+    )[0, 1]
 
 
 def gaussian_independence_check(rho):
@@ -191,7 +210,7 @@ def gaussian_independence_check(rho):
     return True if rho is zero, otherwise False.
     """
 
-    return rho == 0
+    return bool(rho == 0)
 
 
 def zero_rho_covariance_check(n=100000):
@@ -211,7 +230,7 @@ def zero_rho_covariance_check(n=100000):
 
     sample_cov = cov_matrix[0, 1]
 
-    return abs(sample_cov) < 0.1
+    return bool(abs(sample_cov) < 0.1)
 
 
 def nonzero_rho_covariance_check(n=100000):
@@ -239,4 +258,4 @@ def nonzero_rho_covariance_check(n=100000):
 
     expected_cov = rho * sigma_x * sigma_y
 
-    return abs(sample_cov - expected_cov) < 0.15
+    return bool(abs(sample_cov - expected_cov) < 0.15)
